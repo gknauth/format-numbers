@@ -1,16 +1,11 @@
 #lang racket/base
 ;; Copyright Geoffrey S. Knauth. See file "info.rkt".
+;; format-numbers
 
 ;; Thanks for Neil Van Dyke's numberformat-old, from which I saw how he
 ;; made his racket package.
 
-(provide fmt-i-02d
-         fmt-i-02x
-         fmt-c-02x
-         fmt-1s-02x
-         subspacezero
-         real->scientific-string
-         format-float)
+(provide (all-defined-out))
 
 (define (fmt-i-02d n)
   (let ((s (format "~a" n)))
@@ -58,16 +53,16 @@
                     digits-after-decimal-k))
                e-orig))]))
 
-;; original format-float (most of the meat now in format-numerals)
-;; from Joe Marshall <jmarshall@alum.mit.edu>
+;; original format-float came from from Joe Marshall <jmarshall@alum.mit.edu>
+;; most of the meat is now in format-numerals
 
 ;;;;; input number is exact
 
 (define (format-exact exact digits)
-  (format-numerals (exact-to-intstr-with-order-of-magnitude exact digits) digits))
+  (right-insert-decimal-point (exact-to-intstr-with-order-of-magnitude exact digits) digits))
 
-(define (exact-to-intstr-with-order-of-magnitude exact digits)
-  (number->string (float-to-int-with-order-of-magnitude exact digits)))
+(define (exact-to-intstr-with-order-of-magnitude exact order-of-magnitude)
+  (number->string (float-to-int-with-order-of-magnitude exact order-of-magnitude)))
 
 (define (exact-to-int-with-order-of-magnitude exact order-of-magnitude)
   (round (* exact (expt 10 order-of-magnitude))))
@@ -77,13 +72,13 @@
 (define (format-float float digits)
   (format-exact (inexact->exact float) digits))
 
-(define (float-to-intstr-with-order-of-magnitude float digits)
-  (exact-to-intstr-with-order-of-magnitude (inexact->exact float) digits))
+(define (float-to-intstr-with-order-of-magnitude float order-of-magnitude)
+  (exact-to-intstr-with-order-of-magnitude (inexact->exact float) order-of-magnitude))
 
 (define (float-to-int-with-order-of-magnitude float order-of-magnitude)
   (exact-to-int-with-order-of-magnitude (inexact->exact float) order-of-magnitude))
 
-(define (format-numerals numerals digits)
+(define (right-insert-decimal-point numerals digits)
   (let* ((length   (string-length numerals))
          (dot      (- length digits)))
     (string-append
@@ -97,6 +92,7 @@
 (module+ test
   ;; Tests to be run with raco test
   (require rackunit)
+  (check-equal? (fmt-i-02d 5) "05")
   (check-equal? (fmt-i-02x 11) "0b")
   (check-equal? (fmt-c-02x #\017) "0f")
   (check-equal? (fmt-1s-02x "\016") "0e")
@@ -108,8 +104,8 @@
   (check-equal? (float-to-intstr-with-order-of-magnitude 123.4567 2) "12346")
   (check-equal? (exact-to-intstr-with-order-of-magnitude 1234567/10000 4) "1234567")
   (check-equal? (exact-to-intstr-with-order-of-magnitude 1234567/10000 2) "12346")
-  (check-equal? (format-numerals "1234567" 2) "12345.67")
-  (check-equal? (format-numerals "1234567" 4) "123.4567")
+  (check-equal? (right-insert-decimal-point "1234567" 2) "12345.67")
+  (check-equal? (right-insert-decimal-point "1234567" 4) "123.4567")
   
   )
 
