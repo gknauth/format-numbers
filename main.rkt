@@ -1,8 +1,8 @@
 #lang racket/base
-;; Copyright Geoffrey S. Knauth. See file "info.rkt".
 ;; format-numbers
+;; Copyright Geoffrey S. Knauth. See file "info.rkt".
 
-;; Thanks for Neil Van Dyke's numberformat-old, from which I saw how he
+;; Thanks for Neil Van Dyke's numberformat-old, which got me started, seeing how he
 ;; made his racket package.
 
 (provide (all-defined-out))
