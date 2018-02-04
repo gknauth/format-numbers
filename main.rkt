@@ -1,5 +1,5 @@
 #lang racket/base
-;; format-numbers
+;; format-numbers/main.rkt
 ;; Copyright Geoffrey S. Knauth. See file "info.rkt".
 
 ;; Thanks for Neil Van Dyke's numberformat-old, which got me started, seeing how he
